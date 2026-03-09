@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MvcUnitTesting_dotnet8.Models;
+using Tracker.WebAPIClient;
 
 namespace MvcUnitTesting_dotnet8
 {
@@ -37,6 +38,8 @@ namespace MvcUnitTesting_dotnet8
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            ActivityAPIClient.Track(StudentID: "S00198790", StudentName: "Ronan Keaveney", activityName: "Rad302 2026 Week 2 Lab 1", Task: "Running Week 2 App");
 
             app.Run();
         }
