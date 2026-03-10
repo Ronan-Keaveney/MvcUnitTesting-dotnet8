@@ -10,22 +10,32 @@ namespace MvcUnitTesting_dotnet8
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
             builder.Services.AddControllersWithViews();
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
             builder.Services.AddDbContext<BookDbContext>(options =>
                 options.UseSqlServer(connectionString));
-            // Register the repository as a service
+
             builder.Services.AddScoped<IRepository<Book>, WorkingBookRepository<Book>>();
+            builder.Services.AddScoped<BookSeeder>();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+            }
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<BookDbContext>();
+                context.Database.Migrate();
+
+                var seeder = scope.ServiceProvider.GetRequiredService<BookSeeder>();
+                seeder.Seed();
             }
 
             app.UseHttpsRedirection();
@@ -39,7 +49,11 @@ namespace MvcUnitTesting_dotnet8
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
-            ActivityAPIClient.Track(StudentID: "S00198790", StudentName: "Ronan Keaveney", activityName: "Rad302 2026 Week 2 Lab 1", Task: "Running Week 2 App");
+            ActivityAPIClient.Track(
+                StudentID: "S00198790",
+                StudentName: "Ronan Keaveney",
+                activityName: "Rad302 2026 Week 2 Lab 1",
+                Task: "Implementing Production Repository Pattern");
 
             app.Run();
         }

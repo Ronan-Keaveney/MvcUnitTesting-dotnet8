@@ -1,0 +1,39 @@
+﻿@model IEnumerable<MvcUnitTesting_dotnet8.Models.Book>
+
+@{
+    ViewData["Title"] = "Books";
+}
+
+<h1>Books</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Genre</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var book in Model)
+        {
+            <tr>
+                <td>@book.ID</td>
+                <td>@book.Genre</td>
+                <td>@book.Name</td>
+                <td>@book.Price</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@book.ID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@book.ID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@book.ID">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
